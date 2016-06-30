@@ -1,0 +1,66 @@
+CPSC 457
+Assignment 3 - Part B
+Johnny Phuong Chung
+
+----------
+Question 1:
+Simulations allow us to experiment with real-life concepts by simplifying some aspects of real-life and by changing other aspects. Does this simulation do a good job of simulation a coffee shop? Suggest some modifications to the simulation and what you would achieve by implementing them.
+
+
+----------
+Question 2:
+Monitors are a high-level synchronization tool that must have language support to be implemented. Discuss why this is and discuss why more primitive synchronization tools (such as mutexes and semaphores) are still used in higher level languages.
+
+
+
+----------
+Question 3:
+Most modern operating systems do nothing to prevent deadlocks. Why? What assumptions do the developers make that allow them to ignore the deadlock problem? Is it a good idea to ignore deadlocks?
+
+
+----------
+Question 4:
+With the following table determine if the system is in a safe state or not and explain why? The available array is <3, 2, 2>.
+
+	|           | Allocation||  Max      |
+	| Process   |------------------------|
+	|           | A | B | C || A | B | C |
+	--------------------------------------
+	|  P1       | 0 | 2 | 0 || 0 | 5 | 4 |
+	|  P2       | 2 | 2 | 0 || 3 | 2 | 3 |
+	|  P3       | 3 | 0 | 2 ||10 | 0 | 6 |
+	|  P4       | 2 | 1 | 1 || 2 | 2 | 2 |
+	|  P5       | 0 | 1 | 1 || 5 | 1 | 1 |		
+
+----------
+Question 5:
+Discuss the benefits and draw backs of swapping and paging for memory management. Paging is almost universally used, why?
+
+----------
+Question 6:
+Consider a disk with 2500 cylinders number 0 - 2499. The drive is currently serving a request at cylinder 210. For a pending queue (in FIFO order) caculate the total distance (in cylinders) that the disk arm must move to satisfy all requests for each disk-scheduling algorithm.Queue: 119, 554, 1198, 2101, 2000, 1618, 1619
+- FCFS
+- SSTF
+- SCAN
+- LOOK
+- C-SCAN
+- C-LOOK
+
+----------
+Question 7:
+Increasing the number of disks attached to the system increases your chance of disk failure. Why is this so? Do all RAID configurations offer a benefit worth the increased risk? If so, which ones and why?
+
+
+----------
+Question 8:
+Most directory systems go out of their way to avoid cycles in the graph (or tree) or directories. Why? If you did allow cycles how could you ensure that a file is properly deleted once there are no references to it?
+
+----------
+Question 9:
+What is the difference between a KibiByte and KiloByte (both mathimatically and semanticaly). Why has the distinction been introduced? Is it a good solution?
+
+----------
+Question 10:
+*nix systems track the time in seconds since Midnight, January 1, 1970. How long is it possible for these systems to track the time using a) a signed 32 bit integer, b) an unsigned 32bit integer or c) a 64bit integer? What date (year and month) will each of these wrap around to cause a "y2k" problem? 
+
+
