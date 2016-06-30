@@ -16,6 +16,12 @@ USAGE: $./a3 [-bar_model] [bar_num] [cust_num]
 
 ASSUMPTIONS/COMMENTS:
 - space model generates only one cashier barista, all other baristas delegated to clearing orders
+- MAX_BUFFER_SIZE should never be exceeded, and as such 2 symmetricl semaphores are used to control each buffer
+- the use of the sleep() and usleep() functions are to reduce the undesired effect of busywaiting
+- Simulations 1 and 2 are run using the standard a3.c file
+- Simulations 3 and 4 are run using respectively modified versions of the a3.c file
+- Disk Scheduling totals calculated as demonstrated by Tyson Kendon
+- No error checking for more than 4 command line arguments, focus on model and number of baristas/customers
 
 SOURCES:
 - http://pubs.opengroup.org/onlinepubs/007908799/xsh/pthread.h.html
