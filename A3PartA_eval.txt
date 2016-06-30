@@ -34,7 +34,8 @@ We also run the simulation again, keeping simulation conditions the same save th
 -----------
 Question 4:
 For the final simulation, we can pose the question of how order clear time is affected if there are additional items on the menu with extreme production times. Specifically, what would happen to the performance of both models if there an item with a significantly longer production time, and another item with a very short production time?
-By modifying the random production time generation of the simulation to give items a 1/5 chance of having a 2000ms production time, and a 1/5 chance of having a 10ms production time. Like in the first simulation, the number of baristas is same for both models, which each getting 4
+By modifying the random production time generation of the simulation to give items a 1/5 chance of having a 2000ms production time, and a 1/5 chance of having a 10ms production time. Like in the first simulation, the number of baristas is same for both models, which each getting 4. The number of customers was set to be a range over 5 to 100.
+From our results, we can observe an increased divergence in the performance of the space and train models when there are more customers to serve, with the space model requiring more time to clear orders than train model. This result again goes back to the workflow of the baristas in each model; since all baristas in the train model work towards filling single orders, the loss of throughput incurred by receiving an order with a 2000ms itme is mitigated, and the time benefits of 10ms items more easily highlighted. This explains the slight dips in time for train clearing despite an increase in customers, as opposed to the more consistently slowing space baristas.
 
 
 
