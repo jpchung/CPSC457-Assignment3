@@ -11,11 +11,17 @@ Simulations allow us to experiment with real-life concepts by simplifying some a
 Question 2:
 Monitors are a high-level synchronization tool that must have language support to be implemented. Discuss why this is and discuss why more primitive synchronization tools (such as mutexes and semaphores) are still used in higher level languages.
 
-
+Monitors as high-level synchronization tools require language support is due in part to what makes them different from semaphores; monitor separates mutual exclusion operations from conditional synchronization operations. This is to allow for more convenient synchronization, wherein mutual exlusion is ensured by monitors at runtime, whereas with semaphores and mutexes it is the duty of the programmer to explicate their synchronization needs in the code.
+Since the intent of monitors is to automate synchronization, libraries to perform the underlying locking and unlocking operations must be implemented to allow for this sort of automation. Thus the need for language support of these monitor libraries becomes apparent.
+However, despite the high-level synchronization that monitors provide, the implementation as specified in the accompanying libraries may not always align with the needs of the programmer or their desired processes. Furthermore, with the need for additional libraries and automation of synchronization comes the tradeoff of inefficiency. As such, the more primitive tools (mutexes and semaphores) are still preserved in higher level languages to allow for more robust options as to how synchronization should be handled. Furthermore, in their focus for mutual exclusion, monitors only allow for single threads to access critical sections, whereas semaphores allow for flexible access, which may be beneficial given the right synchronization scenario. Semaphores and mutexes also allow for greater granularity when locking, as they can synchronize individual lines of code.
 
 ----------
 Question 3:
 Most modern operating systems do nothing to prevent deadlocks. Why? What assumptions do the developers make that allow them to ignore the deadlock problem? Is it a good idea to ignore deadlocks?
+
+The reason that most modern operating systems have no deadlock prevention is mostly due to the cost of implementing deadlock prevention and detection. 
+Developers work under the assumption that the actual chance of deadlocks occurring is rare enough, and the resulting loss of data low enough, that the cost of the OS constantly devoting resources and operations for deadlock detection and prevention is not justified by any returning benefit of handling it.
+Instead, operating systems delegate deadlock handling to the user/developer rather than waste CPU with background operations to handle deadlocks.
 
 
 ----------
@@ -26,19 +32,79 @@ With the following table determine if the system is in a safe state or not and e
 	| Process   |------------------------|
 	|           | A | B | C || A | B | C |
 	--------------------------------------
-	|  P1       | 0 | 2 | 0 || 0 | 5 | 4 |
-	|  P2       | 2 | 2 | 0 || 3 | 2 | 3 |
-	|  P3       | 3 | 0 | 2 ||10 | 0 | 6 |
-	|  P4       | 2 | 1 | 1 || 2 | 2 | 2 |
-	|  P5       | 0 | 1 | 1 || 5 | 1 | 1 |		
+	|  P0       | 0 | 2 | 0 || 0 | 5 | 4 |
+	|  P1       | 2 | 2 | 0 || 3 | 2 | 3 |
+	|  P2       | 3 | 0 | 2 ||10 | 0 | 6 |
+	|  P3       | 2 | 1 | 1 || 2 | 2 | 2 |
+	|  P4       | 0 | 1 | 1 || 5 | 1 | 1 |	
 
+From the given table, the matrix for Need = Max - Alloc is as follows:
+
+	    Need
+	| A | B | C |
+	-------------
+     P0 | 0 | 3 | 4 |
+     P1 | 1 | 0 | 3 |
+     P2 | 7 | 0 | 4 |
+     P3 | 0 | 1 | 1 |
+     P4 | 5 | 0 | 0 |
+
+	We can thus apply the Banker's Safety Algorithm as follows:
+	i) initialize:
+		Work = Available = (3,2,2)
+		Finish = [F, F, F, F, F]
+
+	ii) choose P3, Need3 = (0,1,1) <= Work
+		Work = Work + Alloc3 = (3,2,2) + (2,1,1) = (5,3,3)
+		Finish = [F, F, F, T, F] 
+
+	iii) choose P4, Need4 = (5,0,0) <= Work
+		Work = Work + Alloc4 = (5,3,3) + (0,1,1) = (5,4,4)
+		Finish = [F, F, F, T, T] 
+
+	iv) choose P1, Need1 = (1,0,3) <= Work
+		Work = Work + Alloc1 = (5,4,4) + (2,2,0) = (7,6,4)
+		Finish = [F, T, F, T, T]
+
+	v) choose P0, Need0 = (0,3,4) <= Work
+		Work = Work + Alloc0 = (7,6,4) + (0,2,0) = (7,8,4)
+		Finish = [T, T, F, T, T]  
+			   
+	vi) choose P2, Need2 = (7,0,4) <= Work
+		Work = Work + Alloc0 = (7,8,4) + (3,0,2) = (10,8,6)
+		Finish = [T, T, T, T, T]  
+
+Thus, since Finish[i] = T for all i, and there exists a safe process sequence <P3, P4, P1, P0, P2>, the system is in a safe state as per the Safety Algorithm.
+			   
 ----------
 Question 5:
 Discuss the benefits and draw backs of swapping and paging for memory management. Paging is almost universally used, why?
 
+The benefits of Swapping are as follows:
+- It is simple to implement
+- reduces the number of memory conflicts between processes since non-running processes are swapped out of memory to disk
+- Better for heavier work loads
+
+The drawbacks of of swapping are as follows:
+- There is no granularity for memory management, as the entire address space of a process is swapped to and from disk rather than in parts, which in turn may result in more external fragmentation.
+- 
+- Swapping to and from the disk is very slow
+- Transfer time is proportional to the amount of memory swapped, so larger processes take longer time to swap in and out.
+
+The benefits of paging are as follows:
+- It allows for process' physical address space to be non-contiguous, i.e. memory can be allocated to the process using whatever available units rather than as a single block for the entire process. 
+- It does not require an entire process to currently be existing in memory to execute, as pages can be loaded in as needed via Demand Paging.
+- Demand Paging allows for the OS to execute processes that require more physical memory than is actually available
+
+The drawbacks of paging are as follows:
+- without a Translation Look-aside Buffer, the paging operations can be expensive, as it requires double the memory lookups (one for the page table, and another the physical memory)
+- internal fragmentation
+
+The main reason that paging is nearly universal for memory management is because it breaks the dependence on physical memory size. Paging also results in more efficient memory usage, since main memory is significantly faster than disk, and pages allow for more processes to reside on the memory than swapping would allow. Furthermore, with the ubiquity of paging instead of swapping, thrashing (wherein the CPU spends more time switching processes than running them) is no longer a major memory management concern.
+
 ----------
 Question 6:
-Consider a disk with 2500 cylinders number 0 - 2499. The drive is currently serving a request at cylinder 210. For a pending queue (in FIFO order) caculate the total distance (in cylinders) that the disk arm must move to satisfy all requests for each disk-scheduling algorithm.Queue: 119, 554, 1198, 2101, 2000, 1618, 1619
+Consider a disk with 2500 cylinders number 0 - 2499. The drive is currently serving a request at cylinder 210 and heading towards cylinder 2500. For a pending queue (in FIFO order) calculate the total distance (in cylinders) that the disk arm must move to satisfy all requests for each disk-scheduling algorithm.Queue: 119, 554, 1198, 2101, 2000, 1618, 1619
 - FCFS
 - SSTF
 - SCAN
@@ -46,21 +112,286 @@ Consider a disk with 2500 cylinders number 0 - 2499. The drive is currently serv
 - C-SCAN
 - C-LOOK
 
+
+First Come, First Served (FCFS):
+		  Head
+		  (210)
+		   ||
+		   \/
+
+	0	119	 554	 1198	     1618 1619	    2000    2101	2499
+	|_______|________|_______|___________|____|_________|_______|___________|
+		 <---
+		 ------->
+			 ------->
+				 ---------------------------------->
+							    <-------
+					     <--------------
+					     ---->
+
+
+	Cylinder Distance travelled by head:
+	|210 -119| = 91
+	|119 - 554| = 435
+	|554 - 1198| = 644
+	|1198 - 2101| = 903
+	|2101 - 2000| = 101
+	|2000 - 1618| = 382
+	|1618 - 1619| = 1
+				Total = 2557
+
+
+
+Shortest Seek Time First (SSTF):
+		  Head
+		  (210)
+		   ||
+		   \/
+
+	0	119	 554	 1198	     1618 1619	    2000    2101	2499
+	|_______|________|_______|___________|____|_________|_______|___________|
+		 <---
+		 ------->
+			 ------->
+				 ----------->
+					     ---->
+						  --------->
+							    ------->
+						
+
+
+	Cylinder Distance travelled by head:
+		|210 -119| = 91
+		|119 - 554| = 435
+		|554 - 1198| = 644
+		|1198 - 1618| = 420
+		|1618 - 1619| = 1
+		|1619 - 2000| = 381
+		|2000 - 2101| = 101
+					Total = 2073
+
+
+SCAN:
+	Heading towards cylinder 2500
+		  Head
+		  (210)
+		   ||
+		   \/
+
+	0	119	 554	 1198	     1618 1619	    2000    2101	2499
+	|_______|________|_______|___________|____|_________|_______|___________|
+		    ---->
+			 ------->
+				 ----------->
+					     ---->
+						  --------->
+							    ------->
+								    ----------->
+		<---------------------------------------------------------------
+	<-------
+
+	Cylinder Distance travelled by head:
+		|210 - 554| = 344
+		|554 - 1198| = 644
+		|1198 - 1618| = 420
+		|1618 - 1619| = 1
+		|1619 - 2000| = 381
+		|2000 - 2101| = 101
+		|2101 - 2499| = 398
+		|2499 - 119| = 2380
+		|119 - 0| = 119|
+
+					Total = 4788
+
+LOOK:
+	Heading towards cylinder 2500
+		  Head
+		  (210)
+		   ||
+		   \/
+
+	0	119	 554	 1198	     1618 1619	    2000    2101	2499
+	|_______|________|_______|___________|____|_________|_______|___________|
+		    ---->
+			 ------->
+				 ----------->
+					     ---->
+						  --------->
+							    ------->
+		<---------------------------------------------------
+
+
+
+	Cylinder Distance travelled by head:
+		|210 - 554| = 344
+		|554 - 1198| = 644
+		|1198 - 1618| = 420
+		|1618 - 1619| = 1
+		|1619 - 2000| = 381
+		|2000 - 2101| = 101
+		|2101-119| = 1982
+					Total = 3873
+
+C-SCAN:
+	Heading towards cylinder 2500
+		  Head
+		  (210)
+		   ||
+		   \/
+
+	0	119	 554	 1198	     1618 1619	    2000    2101	2499
+	|_______|________|_______|___________|____|_________|_______|___________|
+		    ---->
+			 ------->
+				 ----------->
+					     ---->
+						  --------->
+							    ------->
+								    ----------->
+	<-----------------------------------------------------------------------
+	------>
+
+	Cylinder Distance travelled by head:
+		|210 - 554| = 344
+		|554 - 1198| = 644
+		|1198 - 1618| = 420
+		|1618 - 1619| = 1
+		|1619 - 2000| = 381
+		|2000 - 2101| = 101
+		|2101 - 2499| = 398
+		|2499 - 0| = 2499
+		|0 - 119| = 119
+					Total= 4907
+
+
+C-LOOK:
+	Heading towards cylinder 2500
+		  Head
+		  (210)
+		   ||
+		   \/
+
+	0	119	 554	 1198	     1618 1619	    2000    2101	2499
+	|_______|________|_______|___________|____|_________|_______|___________|
+		    ---->
+			 ------->
+				 ----------->
+					     ---->
+						  --------->
+							    ------->
+		<---------------------------------------------------
+
+	Cylinder Distance travelled by head:
+		|210 - 554| = 344
+		|554 - 1198| = 644
+		|1198 - 1618| = 420
+		|1618 - 1619| = 1
+		|1619 - 2000| = 381
+		|2000 - 2101| = 101
+		|2101-119| = 1982
+					Total = 3873
+
 ----------
 Question 7:
 Increasing the number of disks attached to the system increases your chance of disk failure. Why is this so? Do all RAID configurations offer a benefit worth the increased risk? If so, which ones and why?
 
+While we assume disks to be non-volatile, like all media they are prone to degradation over time. So while increasing the number of attached disks, like that seen in some RAID levels, may increase performance via parallel access, each disk comes with a chance of failure, and should we only have one copy of data, the loss of data in even disk would be significant. Configurations that run striping, wherein data is split across the attached disks are especially impacted by this risk.
+However, some RAID configurations mitigate this risk through mirroring, wherein each disk instead contains a full copy of the data, such as RAID 1, RAID 1+0 or RAID P + Q. In this way, these configurations provide the benefit of reliability through redundancy.
 
 ----------
 Question 8:
 Most directory systems go out of their way to avoid cycles in the graph (or tree) or directories. Why? If you did allow cycles how could you ensure that a file is properly deleted once there are no references to it?
 
+The reason that directory systems avoid cycling in graphs of directories is avoid redundancy when searching recursively. Directory systems opt for an acyclic graph structure so as to avoid traversing shared sections repeatedly, which could otherwise result in decreased performance, or even loss of correctness. 
+
+Should cycling be allowed for directory systems, a problem arises as file deletion cannot be determined via reference count, as the self-referencing nature of cycles mandates the reference count be non-zero. Thus, cyclic directories would require an additional traversal to verify deletion. Additionally, while algorithms exist to detect graph cycling, the computational overhead required to maintain them would be significant, and would be exacerbated if searching directories on disk storage.
+
+
 ----------
 Question 9:
 What is the difference between a KibiByte and KiloByte (both mathimatically and semanticaly). Why has the distinction been introduced? Is it a good solution?
 
+From a mathematical perspective, a KibiByte is an order of base 2, whereas a KiloByte is an order of base 10:
+	1 KibiByte (KiB) = 1024 bytes
+	1 KiloByte (kB) = 1000 bytes
+
+
+The prefix of kilo- is scientific notation denoting 10^3, whereas kibi- is a custom prefix proposed by the International Electronic Commission (IEC) for denoting 2^10. The introduction of the IEC standard (including kibi, mebi-, etc) was meant to reduce confusion between the binary construction of memory and hard disk sizes (by technological legacy) and the societally learned expectations of base 10 counting. Due to the Kibibyte and KiloByte only having a difference of 24 bytes, the KiloByte had become the colloquial term for the value of the Kibibyte, 1024 bytes.
+While the misnomer seems inconsequential, associating binary storage sizes with SI sizes becomes problematic with increasing orders of magnitude. For example, a MegaByte in SI notation is 10^6, whereas the corresponding MebiByte in IEC notation is (1024)^2 bytes, demonstrating the conflict of associating SI meaning to a binary based system.
+
+As for the effectiveness of IEC notation as a solution, one can conclude that efforts were in vain, as the SI Kilobyte is still commonly meant to refer to the base-2 KibiByte. If anything, the association of SI to binary has only solidified within the public consciousness, with the GigaByte and TeraByte also being used to refer to the GibiByte and TebiByte despite the significant difference in sizes between the two notations.
+
 ----------
 Question 10:
 *nix systems track the time in seconds since Midnight, January 1, 1970. How long is it possible for these systems to track the time using a) a signed 32 bit integer, b) an unsigned 32bit integer or c) a 64bit integer? What date (year and month) will each of these wrap around to cause a "y2k" problem? 
+
+a)A signed 32-bit integer can measure for 2^(32-1) positive integers and 2^(32-1) negative integers.
+As such, a *nix system using a signed 32-bit integer can measure time for:
+	2^(32-1) seconds = 2147483648 seconds
+
+which, when converted to years, is equal to:
+	 2147483648 seconds = 68.096259766616 years =  68 years, 35.1581288 days
+
+Thus, the date at which the time will wrap around to cause a "y2k" problem is:
+	Feb 5, 2038
+
+b)An unsigned 32-bit integer can measure for 2^(32)-1 integers.
+As such, a *nix system using an unsigned 32-bit integer can measure time for:
+	2^(32)-1 seconds =  4294967296 seconds
+
+which, when converted to years, is equal to:
+	4294967296 seconds = 136.19251953323 years = 136 years, 70.3162576 days
+
+Thus, the date at which the time will wrap around to cause a "y2k" problem is:
+	March 11, 2106
+
+c) A signed 64-bit integer can measure for 2^(64-1) positive integers and 2^(64-1) negative integers.
+As such, a *nix system using a signed 64-bit integer can measure time for:
+	2^(64-1) seconds  = 9,223,372,036,854,775,808 seconds
+
+Thus, the date at which the time will wrap around to cause a "y2k" problem is:
+ 	December 4, 292,277,026,596
+Which should be noted as being sufficient for tracking time until the heat death of the known universe.
+
+
+
+----------
+REFERENCES:
+- Question 1:
+- Question 2:
+	http://www.cs.utexas.edu/users/witchel/372/lectures/
+	http://www.cs.cornell.edu/Courses/cs4410/2015su/lectures/lec08-mon.html
+
+- Question 3:
+	source:https://www.quora.com/Why-do-modern-operating-systems-pretend-that-deadlocks-do-not-occur
+
+- Question 4:
+	- Lecture 11
+
+- Question 5:
+	http://www.tutorialspoint.com/operating_system/os_memory_management.htm
+	https://www.quora.com/What-is-difference-between-paging-and-swapping
+	Modern Operating System - 4th Edition (Tanenbaum and Bos 2014), Chapter 3
+	https://courses.cs.washington.edu/courses/cse451/06au/slides/
+	http://www.sqlserverspecialists.com/2014/01/paging-and-swapping-in-operating-system.html
+
+- Question 6:
+	Lecture 13
+- Question 7:
+	http://searchstorage.techtarget.com/definition/RAID
+	http://www.pcmag.com/article2/0,2817,2370235,00.asp
+	Operating System Concepts - 9th edition(Silberschatz, Galvin, and Gagne 2014), Chapter 10
+- Question 8:
+	Operating System Concepts - 9th edition(Silberschatz, Galvin, and Gagne 2014), Chapter 11
+
+- Question 9:
+	http://www.dr-lex.be/info-stuff/bytecalc.html#fn2
+- Question 10:
+	https://en.wikipedia.org/wiki/Unix_time
+	https://en.wikipedia.org/wiki/Year_2038_problem
+	http://stackoverflow.com/questions/9074812/what-will-happen-when-seconds-since-epoch-long-max
+
+
+
 
 
