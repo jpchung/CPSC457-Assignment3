@@ -6,6 +6,7 @@ COMPILE/RUN:
 
 ASSUMPTIONS/COMMENTS:
 - space model generates only one cashier barista
+
 SOURCES:
 - http://pubs.opengroup.org/onlinepubs/007908799/xsh/pthread.h.html
 - http://man7.org/linux/man-pages/man3/usleep.3.html
