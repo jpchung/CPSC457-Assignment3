@@ -6,7 +6,13 @@ COMPILE/RUN:
 - navigate to the directory containing the main a3.c file
 - use command $make to compile and link program via Makefile
 - use command $./a3 with command line arguments, as defined in USAGE
+
 USAGE: $./a3 [-bar_model] [bar_num] [cust_num]
+-   bar_model = option for barista model to run for simulation
+-   bar_model: 't' to run Train Model
+-   bar_model: 's' to run Space Model
+- bar_num = number of baristas for the model
+- cust_num = number of customers for simulation
 
 ASSUMPTIONS/COMMENTS:
 - space model generates only one cashier barista, all other baristas delegated to clearing orders
