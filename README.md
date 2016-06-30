@@ -1,11 +1,15 @@
 CPSC 457 Assignment 3 - README Johnny Phuong Chung
 
 DESCRIPTION:
-
+- The purpose of this program is to use thread synchronization tools to construct a coffee shop simulation with "Train" and ""Space" models.
 COMPILE/RUN:
+- navigate to the directory containing the main a3.c file
+- use command $make to compile and link program via Makefile
+- use command $./a3 with command line arguments, as defined in USAGE
+USAGE: $./a3 [-bar_model] [bar_num] [cust_num]
 
 ASSUMPTIONS/COMMENTS:
-- space model generates only one cashier barista
+- space model generates only one cashier barista, all other baristas delegated to clearing orders
 
 SOURCES:
 - http://pubs.opengroup.org/onlinepubs/007908799/xsh/pthread.h.html
