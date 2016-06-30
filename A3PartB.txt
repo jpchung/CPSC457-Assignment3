@@ -5,7 +5,9 @@ Johnny Phuong Chung
 ----------
 Question 1:
 Simulations allow us to experiment with real-life concepts by simplifying some aspects of real-life and by changing other aspects. Does this simulation do a good job of simulation a coffee shop? Suggest some modifications to the simulation and what you would achieve by implementing them.
-
+In terms of the effectiveness in simulating a coffee shop, it can be argued that simulation created makes a commendable effort. It directs focus on the problems of synchronization and Producer-Consumer by abstracting away and simplifying the coffee shop ordering process. Tradeoffs between redundant workforce and throughput are also able to be highlighted with the simulation we have.
+However, it is not to say that simulation could not be improved. Though there is a benefit to simplifying the transaction steps as in our simulation, one could also argue that some interactions should be accounted for as they contribute to a more accurate measure of throughput.
+Also, in efforts to maintain proper syncrhonization  between producers and consumer relationships, at low barista count and high customer count we may encounter scenarios where customers who ordered later get the order filled and cleared before the customers before, which would certainly not be acceptable in an actual coffee shop. This is in part due to the stack-like nature in which the simulation manages orders, and should we want to align the simulation to be more practical in this regard, the simulation could thus be improved with  a queue.
 
 ----------
 Question 2:
