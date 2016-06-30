@@ -26,6 +26,20 @@ As such, there is evidence to suggest that given a uniformly large number of cus
 -----------
 Question 3:
 
-For the third simulatiom, our main concern is measuring the rate of barista throughput against different customer generation rates. 
+For the third simulatiom, our main concern is measuring the rate of barista throughput against different customer generation rates. the default model in the simulation is the train model, which is initialized with 4 baristas, and an initial 5 customers. However, every 10 seconds the number of customers generated and awaiting their orders is increased, with the goal of findiing the rate at which customers coming in overtakes the ability of the 4 baristas to clear the orders, the breaking point at which baristas can never finish clearing all orders. 
+For the implementation of the simulation, 40 was chosen as the maximum number of customers to check for, with an incrementation of 5 customers per 5 seconds from the starting 5. From our results, we can observe that prior to 30 customers, the 4 baristas are fully capable of clearing orders almost immediately. For 30-35 customers, we start to see a significant increase in time needed for the baristas to clear orders, with the critical rate seeming to be 35 customers/10 seconds. This is extrapolated by the exponential increase in clear times for the rates of 40 customers/10 seconds onward. As such, we can infer from the average of 3 simulations that 35 customers/10 seconds that 4 baristas can serve in reasonable time.
+We also run the simulation again, keeping simulation conditions the same save that the initial number of baristas is now 5 instead of 4. As expected, the extra barista reduces the time for completion significantly, as the amount of concurrent operations is also increased by the extra barista's contributions.
+
+
 -----------
 Question 4:
+For the final simulation, we can pose the question of how order clear time is affected if there are additional items on the menu with extreme production times. Specifically, what would happen to the performance of both models if there an item with a significantly longer production time, and another item with a very short production time?
+By modifying the random production time generation of the simulation to give items a 1/5 chance of having a 2000ms production time, and a 1/5 chance of having a 10ms production time. Like in the first simulation, the number of baristas is same for both models, which each getting 4
+
+
+
+
+
+
+
+
