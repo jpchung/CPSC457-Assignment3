@@ -1,0 +1,31 @@
+CPSC 457 - Assignment 3
+Part A - Coffee Shop Simulation
+Johnny Phuong Chung
+
+
+EVALUATION
+
+-----------
+Question 1:
+
+For the first simulation of the coffee shop, both the train model and space models were initialized with 4 baristas, and were assigned to fill the orders of customers over a range of 5 to 500.
+From that, the times to completion for each order was documented for both the train and space baristas, and the average of 3 simulation runs was graphed (see accompanying Excel spreadsheet).
+
+From the results of the 3 simulation runs, we can observe that given equal number of baristas and relatively uniform customer orders, the order completion times of both models increase as the number of customers to serve increases. Not only that, but the performance of the train and space models are extremely close and with little variation between the average slopes of the two models. As such, we can conclude that in this scenario there is little significant difference in efficiency between running the barista train model as opposed to barista space model.
+
+-----------
+Question 2:
+
+For the second simulation, the number of customers is kept constant at 100, but the number of baristas for the two models both start at 2, and both increase by the same number of baristas after a set time interval until they reach a maximum of 10. Once again, the average of 3 simulation runs of completion times for both models were graphed.
+From the results of the 3 simulation runs, we can observe that for the completion time for the space model thread is longer than that for the train model given fewer baristas. Most notably, the recorded completion time for 2 baristas in the space model is approximately double that for 2 baristas in the train model, despite both having a constant 100 customer queue to serve. The train model also maintains a relatively consistent completion time in light of the constant 100 customers.
+This result is not surprising, as for the train model both baristas are working towards finishing a single order, whereas the space model separates the customer transaction and order processing between the 2 baristas, meaning only one barista is actively filling a customer order.
+However, as the number of baristas increases evenly over time, the difference in performance between the space and train models reduces, until they are once again nearly uniform. 
+The reason that the space model increases in performance is due to more baristas resulting more baristas being delegated producing and clearing orders (while there is always at most one "cashier" barista in our implementation).
+As such, there is evidence to suggest that given a uniformly large number of customers, the train model requires fewer baristas to optimize order throughput than the space model does, due to the differing structure of barista duties between the models.
+
+-----------
+Question 3:
+
+For the third simulatiom, our main concern is measuring the rate of barista throughput against different customer generation rates. 
+-----------
+Question 4:
